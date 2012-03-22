@@ -24,7 +24,7 @@
     
     // Configuration parameters
     var server = "https://chaos-devnginx.testeveonline.com"; // API server
-    var redirectUri = "http://jim-ws:8001/contactjs.html";
+    var redirectUri = "http://jimpurbrick.github.com/contactjs";
     var clientId = "contactjs"; // OAuth client id
     var csrfTokenName = clientId + "csrftoken";
     var authorizationEndpoint = "https://chaoslogin.testeveonline.com/OAuth/Authorize/"; // OAuth endpoint
