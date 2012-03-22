@@ -1,0 +1,52 @@
+ul
+{
+    padding-left:100px;
+}
+
+li
+{
+    float:none;	
+    list-style-type:none;
+}
+
+body
+{
+    font: 1em "Trebuchet MS",sans-serif;
+    background:black url(http://community.eveonline.com/bitmaps/interface/community/bg.jpg);
+}
+
+span.name
+{
+    float:left;
+    min-width:200px;
+    padding-right:2em;
+}
+
+.arrayItem
+{
+    margin-bottom:1em;
+}
+
+#characterSelectDialog
+{
+    display:none;
+}
+
+#wrapper
+{
+    margin-top:4em;
+}
+
+.center80
+{
+    margin-left:auto;
+    margin-right:auto;
+    width:80%;
+}
+
+#query
+{
+    margin-top:1em;
+    margin-bottom:1em;
+    width:100%;
+}
