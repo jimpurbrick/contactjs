@@ -23,11 +23,11 @@
     "use strict";
     
     // Configuration parameters
-    var server = "https://chaos-devnginx.testeveonline.com"; // API server
-    var redirectUri = "http://jimpurbrick.github.com/contactjs";
+    var server = "http://nginx.jim01.dev"; // API server
+    var redirectUri = "http://10.1.4.51:8888/index.html";
     var clientId = "contactjs"; // OAuth client id
     var csrfTokenName = clientId + "csrftoken";
-    var authorizationEndpoint = "https://chaoslogin.testeveonline.com/OAuth/Authorize/"; // OAuth endpoint
+    var authorizationEndpoint = "http://login.jim01.dev/oauth/Authorize/"; // OAuth endpoint
     var scopes = "personalContactsRead personalContactsWrite corporationContactsRead corporationContactsWrite";
 
     // Client side templates
@@ -81,7 +81,7 @@
         var i;
         for (i = 0; i < contactList.items.length; i++) {
             var contact = contactList.items[i];
-            if (contact.name === name) {
+            if (contact.contact.name === name) {
                 return contact;
             }
         }
@@ -93,7 +93,7 @@
         var i;
         for (i = 0; i < contactList.items.length; i++) {
             var contact = contactList.items[i];
-            if (contact.name === name) {
+            if (contact.contact.name === name) {
                 contactList.items.splice(i, 1);
                 return true;
             }
@@ -163,14 +163,14 @@
 
                             // Create new contact from first result
                             var newContact = {
-                                href: data.items[0].href,
+                                contact: {href: data.items[0].resource.href},
                                 standing: 0
                             };
 
                             // Add new contact to contact list
                             $.ajax(contactListUri, {
                                 type: "POST",
-                                contentType: "application/vnd.ccp.eve.Contact-v1+json",
+                                contentType: "application/vnd.ccp.eve.ContactCreate-v1+json",
                                 data: JSON.stringify(newContact),
                                 success: function() {
 
@@ -197,7 +197,7 @@
     // Cache and render contact list data then bind handlers to rendered elements
     function renderContactList(list) {
         contactList = list;
-        var templateData = $.extend({}, contactList, {self:{href:contactListUri}});
+        var templateData = $.extend({}, contactList, {href:contactListUri});
         $("#wrapper").contents().remove();
         $("#wrapper").append(contactListTemplate(templateData));
         $(".standing").change(onStandingChange);
@@ -216,9 +216,9 @@
         }
         var oldValue = $.extend({}, contact);
         contact = $.extend(contact, update);
-        $.ajax(contact.self, {
+        $.ajax(contact.href, {
             type: "PUT",
-            contentType: "application/vnd.ccp.eve.Contact-v1+json",
+            contentType: "application/vnd.ccp.eve.ContactCreate-v1+json",
             data: JSON.stringify(contact),
             error: function() {
                 // Request failed, restore original value.

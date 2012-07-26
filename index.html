@@ -14,16 +14,16 @@
             <li><a class="page" href="{{previous.href}}">Previous</a></li>
             {{/if}}
             {{#each items}}
-            <li><span class="name">{{this.name}}</span>
+            <li><span class="name">{{this.contact.name}}</span>
                 Standing
                 <select class="standing">
                     {{standing this.standing}}
                 </select>
                 {{watched this.watched}}
-                <a class="remove" href="{{this.self}}" title="Remove">Remove</a>
+                <a class="remove" href="{{this.href}}" title="Remove">Remove</a>
             </li>
             {{/each}}
-            <li><a id="add" href="{{self.href}}">Add</a></li>
+            <li><a id="add" href="{{href}}">Add</a></li>
             {{#if next}}
             <li><a class="page" href="{{next.href}}">Next</a></li>
             {{/if}}
