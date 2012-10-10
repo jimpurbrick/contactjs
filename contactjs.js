@@ -1,6 +1,6 @@
 /*!
  * contactjs
- * https://github.com/somerepo/
+ * https://github.com/jimpurbrick/contactjs
  *
  * Copyright 2012, CCP (http://www.ccpgames.com)
  * Dual licensed under the MIT or GPL Version 2 licenses.
@@ -24,15 +24,21 @@
     
     // Configuration parameters
     var server = "http://nginx.jim01.dev"; // API server
-    var redirectUri = "http://10.1.4.51:8888/index.html";
+    var redirectUri = "https://jimpurbrick.github.com/contactjs/"; // client uri
     var clientId = "contactjs"; // OAuth client id
     var csrfTokenName = clientId + "csrftoken";
+    var token; // OAuth token
     var authorizationEndpoint = "http://login.jim01.dev/oauth/Authorize/"; // OAuth endpoint
-    var scopes = "personalContactsRead personalContactsWrite corporationContactsRead corporationContactsWrite";
+    var scopes = "personalContactsRead personalContactsWrite corporationContactsRead corporationContactsWrite characterRead";
 
     // Client side templates
     var contactListTemplate = Handlebars.compile($("#contact-list-template").html());
     var errorTemplate = Handlebars.compile($("#error-template").html());
+
+    // Notification request
+    var notificationRequest = undefined;
+    var notificationPollTimer = undefined;
+    var notificationStartIndex = 0;
 
     // Map of standing names to values
     var standings = {
@@ -44,11 +50,11 @@
     };
 
     // Template helper used to render a set of standings options
-    Handlebars.registerHelper('standing', function(standing) {
+    Handlebars.registerHelper('standing', function() {
         var standingName, result = "";
         for (standingName in standings) {
             result += "<option";
-            if (standing === standings[standingName]) {
+            if (this.standing === standings[standingName]) {
               result += " selected=\"selected\"";
             }
             result += ">" + standingName + "</option>";
@@ -57,12 +63,12 @@
     });
 
     // Template helper used to render a watched checkbox.
-    Handlebars.registerHelper('watched', function(watched) {
+    Handlebars.registerHelper('watched', function() {
         var result = "Watched <input type=\"checkbox\" class=\"watched\"";
-        if(watched === undefined) {
+        if(this.watched === undefined) {
             return "";
         }
-        if(watched === true) {
+        if(this.watched === true) {
             result += "checked=\"yes\"";
         }
         result += "/>";
@@ -72,6 +78,7 @@
     // Cached uris
     var searchUri;
     var contactListUri;
+    var notificationUri;
 
     // Cached contact list data
     var contactList;
@@ -229,14 +236,85 @@
         return true;
     }
 
+    function createRequestObject() {
+        var result;
+        if (window.XMLHttpRequest) {
+            result = new XMLHttpRequest();
+        } else {
+            result = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        if (!result) {
+            // TODO: error dialog...
+        }
+        return result;
+    }
+
+    function requestNotifications() {
+        notificationRequest = createRequestObject();
+        notificationRequest.open('get', notificationUri, true);
+        notificationRequest.setRequestHeader("Authorization", "Bearer " + token);
+        notificationRequest.setRequestHeader("Accept", "application/vnd.ccp.eve.OnContactUpdate-v1+json, application/vnd.ccp.eve.OnContactDelete-v1+json");
+        notificationRequest.onreadystatechange = pollNotificationResponse;
+        notificationRequest.send(null);
+        notificationStartIndex = 0;
+        notificationPollTimer = setInterval(pollNotificationResponse, 1000);
+    }
+
+    function pollNotificationResponse() {
+
+        var i, line, lines;
+
+        // return if status is not OK or response is not ready
+        if (notificationRequest.readyState != 4 && notificationRequest.readyState != 3) {
+            return;
+        }
+        if (notificationRequest.readyState == 3 && notificationRequest.status != 200) {
+            return;
+        }
+        if (notificationRequest.readyState == 4 && notificationRequest.status != 200) {
+            clearInterval(notificationPollTimer);
+        }
+
+        // split responses and display any newly received messages
+        lines = notificationRequest.responseText.split("\n");
+        for (i = notificationStartIndex; i < lines.length; i += 1) {
+
+            line = $.trim(lines[i]);
+
+            if (line === "") {
+                continue;
+            }
+
+            // request new contact list on notification
+            // an alternative approach would be to apply notification changes to cached local data, but this
+            // is more complex and may result in inconsistencies
+            ajaxGet(contactListUri, "vnd.ccp.eve.ContactCollection-v1", renderContactList);
+
+            // skip this message next time response is polled.
+            notificationStartIndex = i + 1;
+        }
+
+        // if responses is too long, reconnect to free response memory
+        if (lines.length > 100) {
+
+            clearInterval(notificationPollTimer);
+            notificationRequest.abort();
+            requestNotifications();
+        }
+    }
+
     // Follow contact list hyperlink in character
     function getContacts(character) {
+
+        notificationUri = character.notifications.href;
+        requestNotifications();
+
         window.location.hash = character.contacts.href;
     }
 
     // Follow authorized character hyperlink in api root
     function getCharacter(apiRoot) {
-        searchUri = apiRoot.search.href;
+        // searchUri = apiRoot.search.href; TODO: restore this once we have a decent search implementation...
         ajaxGet(apiRoot.character.href, "vnd.ccp.eve.Character-v1", getContacts);
     }
 
@@ -269,7 +347,7 @@
     $(document).ready(function() {
 
         var hash = document.location.hash;
-        var token = extractFromHash("access_token", hash);
+        token = extractFromHash("access_token", hash);
 
         if (token) {
 
