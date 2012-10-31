@@ -23,12 +23,12 @@
     "use strict";
     
     // Configuration parameters
-    var server = "http://nginx.jim01.dev"; // API server
+    var server = "http://crest.cresthack1.dev"; // API server
     var redirectUri = "http://jimpurbrick.github.com/contactjs/"; // client uri
     var clientId = "contactjs"; // OAuth client id
     var csrfTokenName = clientId + "csrftoken";
     var token; // OAuth token
-    var authorizationEndpoint = "http://login.jim01.dev/oauth/Authorize/"; // OAuth endpoint
+    var authorizationEndpoint = "http://login.cresthack1.dev/oauth/Authorize/"; // OAuth endpoint
     var scopes = "personalContactsRead personalContactsWrite corporationContactsRead corporationContactsWrite capsuleerRead";
 
     // Client side templates
