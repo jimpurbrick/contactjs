@@ -28,7 +28,7 @@
     var clientId = "contactjs"; // OAuth client id
     var csrfTokenName = clientId + "csrftoken";
     var token; // OAuth token
-    var authorizationEndpoint = "http://login.cresthack1.dev/oauth/Authorize/"; // OAuth endpoint
+    var authorizationEndpoint = "http://login.jim01.dev/oauth/Authorize/"; // OAuth endpoint
     var scopes = "personalContactsRead personalContactsWrite corporationContactsRead corporationContactsWrite capsuleerRead";
 
     // Client side templates
