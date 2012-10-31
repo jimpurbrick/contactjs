@@ -24,12 +24,12 @@
     
     // Configuration parameters
     var server = "http://nginx.jim01.dev"; // API server
-    var redirectUri = "https://jimpurbrick.github.com/contactjs/"; // client uri
+    var redirectUri = "http://jimpurbrick.github.com/contactjs/"; // client uri
     var clientId = "contactjs"; // OAuth client id
     var csrfTokenName = clientId + "csrftoken";
     var token; // OAuth token
     var authorizationEndpoint = "http://login.cresthack1.dev/oauth/Authorize/"; // OAuth endpoint
-    var scopes = "personalContactsRead personalContactsWrite corporationContactsRead corporationContactsWrite characterRead";
+    var scopes = "personalContactsRead personalContactsWrite corporationContactsRead corporationContactsWrite capsuleerRead";
 
     // Client side templates
     var contactListTemplate = Handlebars.compile($("#contact-list-template").html());
