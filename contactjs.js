@@ -23,12 +23,12 @@
     "use strict";
     
     // Configuration parameters
-    var server = "http://nginx.jim01.dev"; // API server
-    var redirectUri = "https://jimpurbrick.github.com/contactjs/"; // client uri
-    var clientId = "contactjs"; // OAuth client id
+    var server = "https://crest.eveonline.com/"; // API server
+    var redirectUri = "https://jimpurbrick.com/contactjs/"; // client uri
+    var clientId = "e54d5f89eff2470e9135fa5545179541"; // OAuth client id
     var csrfTokenName = clientId + "csrftoken";
     var token; // OAuth token
-    var authorizationEndpoint = "http://login.jim01.dev/oauth/Authorize/"; // OAuth endpoint
+    var authorizationEndpoint = "https://login.eveonline.com/oauth/authorize/"; // OAuth endpoint
     var scopes = "personalContactsRead personalContactsWrite corporationContactsRead corporationContactsWrite characterRead";
 
     // Client side templates
@@ -306,8 +306,9 @@
     // Follow contact list hyperlink in character
     function getContacts(character) {
 
-        notificationUri = character.notifications.href;
-        requestNotifications();
+        // TODO: restore this once we have notifications again...
+        //notificationUri = character.notifications.href;
+        //requestNotifications();
 
         window.location.hash = character.contacts.href;
     }
@@ -315,18 +316,23 @@
     // Follow authorized character hyperlink in api root
     function getCharacter(apiRoot) {
         // searchUri = apiRoot.search.href; TODO: restore this once we have a decent search implementation...
-        ajaxGet(apiRoot.character.href, "vnd.ccp.eve.Character-v1", getContacts);
+        ajaxGet(apiRoot.character.href, "vnd.ccp.eve.Character-v3", getContacts);
+    }
+
+    // Follow decode hyperlink in api root (TODO: Remove decode resource, which doesn't model anything in EVE) 
+    function getDecode(apiRoot) {
+        ajaxGet(apiRoot.decode.href, "vnd.ccp.eve.Options-v1", getCharacter);
     }
 
     // Request api root
     function getRoot() {
-        ajaxGet(server + "/", "vnd.ccp.eve.Api-v1", getCharacter);
+        ajaxGet(server + "/", "vnd.ccp.eve.Api-v3", getDecode);
     }
 
     // Load new API path when hash fragment changes.
     window.onhashchange = function() {
         contactListUri = window.location.hash.substring(1);
-        ajaxGet(contactListUri, "vnd.ccp.eve.ContactCollection-v1", renderContactList);
+        ajaxGet(contactListUri, "vnd.ccp.eve.ContactCollection-v2", renderContactList);
     };
 
     // Generate an RFC4122 version 4 UUID
