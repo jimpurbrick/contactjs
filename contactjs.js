@@ -24,7 +24,7 @@
     
     // Configuration parameters
     var server = "https://crest.eveonline.com/"; // API server
-    var redirectUri = "https://jimpurbrick.com/contactjs/"; // client uri
+    var redirectUri = "http://jimpurbrick.com/contactjs/"; // client uri
     var clientId = "e54d5f89eff2470e9135fa5545179541"; // OAuth client id
     var csrfTokenName = clientId + "csrftoken";
     var token; // OAuth token
