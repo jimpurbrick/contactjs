@@ -29,7 +29,7 @@
     var csrfTokenName = clientId + "csrftoken";
     var token; // OAuth token
     var authorizationEndpoint = "https://login.eveonline.com/oauth/authorize/"; // OAuth endpoint
-    var scopes = "personalContactsRead personalContactsWrite corporationContactsRead corporationContactsWrite characterRead";
+    var scopes = "publicData characterContactsRead characterContactsWrite";
 
     // Client side templates
     var contactListTemplate = Handlebars.compile($("#contact-list-template").html());
