@@ -225,7 +225,8 @@
         contact = $.extend(contact, update);
         $.ajax(contact.href, {
             type: "PUT",
-            contentType: "application/vnd.ccp.eve.ContactCreate-v1+json",
+	    // TODO: restore this once CREST is handling media types correctly again
+	    // contentType: "application/vnd.ccp.eve.ContactCreate-v1+json",
             data: JSON.stringify(contact),
             error: function() {
                 // Request failed, restore original value.
