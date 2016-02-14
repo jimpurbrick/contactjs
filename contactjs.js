@@ -21,7 +21,7 @@
 (function () { // Start contactjs
 
     "use strict";
-    
+
     // Configuration parameters
     var server = "https://crest.eveonline.com/"; // API server
     var redirectUri = "http://jimpurbrick.com/contactjs/"; // client uri
@@ -223,14 +223,15 @@
         }
         var oldValue = $.extend({}, contact);
         contact = $.extend(contact, update);
+
+        // TODO: restore blocked flag once CREST is handling that again...
+        delete contact.blocked;
+
         $.ajax(contact.href, {
             type: "PUT",
             // TODO: restore this once CREST is handling media types correctly again
             // contentType: "application/vnd.ccp.eve.ContactCreate-v1+json",
             contentType: "application/json",
-
-            // TODO: restore blocked flag once CREST is handling that again...
-            delete contact.blocked;
 
             data: JSON.stringify(contact),
             error: function() {
@@ -325,7 +326,7 @@
         ajaxGet(apiRoot.character.href, "vnd.ccp.eve.Character-v3", getContacts);
     }
 
-    // Follow decode hyperlink in api root (TODO: Remove decode resource, which doesn't model anything in EVE) 
+    // Follow decode hyperlink in api root (TODO: Remove decode resource, which doesn't model anything in EVE)
     function getDecode(apiRoot) {
         ajaxGet(apiRoot.decode.href, "vnd.ccp.eve.Options-v1", getCharacter);
     }
