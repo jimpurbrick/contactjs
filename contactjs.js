@@ -227,6 +227,7 @@
             type: "PUT",
 	    // TODO: restore this once CREST is handling media types correctly again
 	    // contentType: "application/vnd.ccp.eve.ContactCreate-v1+json",
+	    contentType: "application/json",
             data: JSON.stringify(contact),
             error: function() {
                 // Request failed, restore original value.
