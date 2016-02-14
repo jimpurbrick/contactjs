@@ -214,6 +214,16 @@
         $("#add").click(onClickAdd);
     }
 
+    // HACK! convert vnd.ccp.eve.ContactCreate-v1+json to as yet unnamed or properly documented
+    // format described here https://developers.eveonline.com/blog/article/crest-updates-for-january-2016
+    function convertContact(contact) {
+        return {
+            standing: contact.standing,
+            contactType: contact.contactType,
+            contact: contact.contact
+        }
+    }
+
     // Update contact in cache and via api
     function updateContact(evt, update) {
         var name = $(evt.target).siblings(".name").html();
@@ -224,16 +234,14 @@
         var oldValue = $.extend({}, contact);
         contact = $.extend(contact, update);
 
-        // TODO: restore blocked flag once CREST is handling that again...
-        delete contact.blocked;
-
         $.ajax(contact.href, {
             type: "PUT",
             // TODO: restore this once CREST is handling media types correctly again
             // contentType: "application/vnd.ccp.eve.ContactCreate-v1+json",
             contentType: "application/json",
 
-            data: JSON.stringify(contact),
+            // TODO: remove convertContact call once CREST is handling media types correctly again
+            data: JSON.stringify(convertContact(contact)),
             error: function() {
                 // Request failed, restore original value.
                 contact = $.extend(contact, oldValue);
