@@ -225,12 +225,12 @@
         contact = $.extend(contact, update);
         $.ajax(contact.href, {
             type: "PUT",
-	    // TODO: restore this once CREST is handling media types correctly again
-	    // contentType: "application/vnd.ccp.eve.ContactCreate-v1+json",
-	    contentType: "application/json",
+            // TODO: restore this once CREST is handling media types correctly again
+            // contentType: "application/vnd.ccp.eve.ContactCreate-v1+json",
+            contentType: "application/json",
 
-	    // TODO: restore blocked flag once CREST is handling that again...
-	    delete contact[blocked];
+            // TODO: restore blocked flag once CREST is handling that again...
+            delete contact.blocked;
 
             data: JSON.stringify(contact),
             error: function() {
